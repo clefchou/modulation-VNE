@@ -1,8 +1,8 @@
-lamda 2.00: demand NO.5 proccess
+lamda 2.00: demand NO.29 proccess
 
 ILP:
-	block: 0
-	success 6
-	time 0.153629
-	weight 205.000000
+	block: 4
+	success 26
+	time 0.416762
+	weight 658.000000
 
