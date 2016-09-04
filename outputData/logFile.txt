@@ -1,0 +1,372 @@
+Event No.0 Eventtype:0 process
+Heu success, get object of 13.000000, using Time 0.013053
+ ILPSolver correct after check
+ILP success, get object of 13.000000, using Time 0.013053
+ A: virtualNod; 0,--> phsicalNod: 2
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 0
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 2, startgrid: 1, modulation: 3
+Z: virtualedge; 2,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 3,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 4,--> phsicaledge: 3, startgrid: 2, modulation: 1
+Z: virtualedge; 5,--> phsicaledge: 0, startgrid: 5, modulation: 1
+Z: virtualedge; 5,--> phsicaledge: 3, startgrid: 5, modulation: 1
+Event No.0 Eventtype:1 process
+Event No.1 Eventtype:0 process
+Heu success, get object of 13.000000, using Time 0.010145
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 13.000000, using Time 0.010145
+ A: virtualNod; 0,--> phsicalNod: 2
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 3
+ A: virtualNod; 3,--> phsicalNod: 0
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 2,--> phsicaledge: 3, startgrid: 2, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 0, startgrid: 6, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 3, startgrid: 6, modulation: 1
+Event No.2 Eventtype:0 process
+Heu success, get object of 8.000000, using Time 0.007796
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 8.000000, using Time 0.007796
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 0
+ A: virtualNod; 3,--> phsicalNod: 2
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 2,--> phsicaledge: 0, startgrid: 7, modulation: 2
+Z: virtualedge; 3,--> phsicaledge: 8, startgrid: 1, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Event No.2 Eventtype:1 process
+Event No.1 Eventtype:1 process
+Event No.3 Eventtype:0 process
+Heu success, get object of 30.000000, using Time 0.012895
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 30.000000, using Time 0.012895
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 4,--> phsicaledge: 8, startgrid: 1, modulation: 1
+Z: virtualedge; 4,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Event No.3 Eventtype:1 process
+Event No.4 Eventtype:0 process
+Heu success, get object of 34.000000, using Time 0.009463
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 34.000000, using Time 0.009463
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Event No.4 Eventtype:1 process
+Event No.5 Eventtype:0 process
+Heu success, get object of 116.000000, using Time 0.018946
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 116.000000, using Time 0.018946
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 4,--> phsicaledge: 7, startgrid: 2, modulation: 0
+Z: virtualedge; 4,--> phsicaledge: 12, startgrid: 2, modulation: 0
+Event No.5 Eventtype:1 process
+Event No.6 Eventtype:0 process
+Heu success, get object of 3.000000, using Time 0.009628
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 3.000000, using Time 0.009628
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 4
+ A: virtualNod; 3,--> phsicalNod: 2
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Event No.6 Eventtype:1 process
+Event No.7 Eventtype:0 process
+Heu success, get object of 21.000000, using Time 0.017374
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 21.000000, using Time 0.017374
+ A: virtualNod; 0,--> phsicalNod: 2
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 3
+ A: virtualNod; 3,--> phsicalNod: 0
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 2,--> phsicaledge: 3, startgrid: 7, modulation: 1
+Event No.8 Eventtype:0 process
+Heu success, get object of 86.000000, using Time 0.017319
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 86.000000, using Time 0.017319
+ A: virtualNod; 0,--> phsicalNod: 3
+ A: virtualNod; 1,--> phsicalNod: 4
+ A: virtualNod; 2,--> phsicalNod: 5
+ A: virtualNod; 3,--> phsicalNod: 1
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 14, startgrid: 1, modulation: 2
+Event No.7 Eventtype:1 process
+Event No.8 Eventtype:1 process
+Event No.9 Eventtype:0 process
+Heu success, get object of 18.000000, using Time 0.008993
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 18.000000, using Time 0.008993
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 3
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 2,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Event No.9 Eventtype:1 process
+Event No.10 Eventtype:0 process
+Heu success, get object of 14.000000, using Time 0.021109
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 14.000000, using Time 0.021109
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 0
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 8, startgrid: 2, modulation: 2
+Z: virtualedge; 3,--> phsicaledge: 0, startgrid: 9, modulation: 2
+Z: virtualedge; 4,--> phsicaledge: 7, startgrid: 2, modulation: 0
+Z: virtualedge; 4,--> phsicaledge: 12, startgrid: 2, modulation: 0
+Z: virtualedge; 5,--> phsicaledge: 0, startgrid: 10, modulation: 2
+Z: virtualedge; 5,--> phsicaledge: 2, startgrid: 10, modulation: 2
+Event No.11 Eventtype:0 process
+Heu success, get object of 14.000000, using Time 0.020258
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 14.000000, using Time 0.020258
+ A: virtualNod; 0,--> phsicalNod: 2
+ A: virtualNod; 1,--> phsicalNod: 0
+ A: virtualNod; 2,--> phsicalNod: 1
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 2, startgrid: 7, modulation: 3
+Z: virtualedge; 2,--> phsicaledge: 8, startgrid: 2, modulation: 2
+Event No.11 Eventtype:1 process
+Event No.10 Eventtype:1 process
+Event No.12 Eventtype:0 process
+Heu failed
+ILPSolver correct after check
+ILP failed
+Event No.13 Eventtype:0 process
+Heu success, get object of 36.000000, using Time 0.027281
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 36.000000, using Time 0.027281
+ A: virtualNod; 0,--> phsicalNod: 2
+ A: virtualNod; 1,--> phsicalNod: 4
+ A: virtualNod; 2,--> phsicalNod: 1
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 2, startgrid: 8, modulation: 2
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 3, startgrid: 8, modulation: 1
+Z: virtualedge; 4,--> phsicaledge: 15, startgrid: 1, modulation: 1
+Z: virtualedge; 5,--> phsicaledge: 4, startgrid: 8, modulation: 0
+Event No.13 Eventtype:1 process
+Event No.14 Eventtype:0 process
+Heu success, get object of 3.000000, using Time 0.012523
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 3.000000, using Time 0.012523
+ A: virtualNod; 0,--> phsicalNod: 3
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 2,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Event No.15 Eventtype:0 process
+Heu success, get object of 17.000000, using Time 0.011507
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 17.000000, using Time 0.011507
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 8, startgrid: 2, modulation: 2
+Z: virtualedge; 3,--> phsicaledge: 8, startgrid: 2, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 11, startgrid: 2, modulation: 1
+Event No.15 Eventtype:1 process
+Event No.16 Eventtype:0 process
+Heu success, get object of 35.000000, using Time 0.018458
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 35.000000, using Time 0.018458
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 4, startgrid: 7, modulation: 0
+Event No.16 Eventtype:1 process
+Event No.14 Eventtype:1 process
+Event No.17 Eventtype:0 process
+Heu success, get object of 10.000000, using Time 0.027132
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 10.000000, using Time 0.027132
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 4,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Event No.17 Eventtype:1 process
+Event No.18 Eventtype:0 process
+Heu success, get object of 67.000000, using Time 0.024573
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 67.000000, using Time 0.024573
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 3,--> phsicaledge: 4, startgrid: 9, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 15, startgrid: 9, modulation: 0
+Event No.18 Eventtype:1 process
+Event No.19 Eventtype:0 process
+Heu success, get object of 30.000000, using Time 0.008403
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 30.000000, using Time 0.008403
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Event No.19 Eventtype:1 process
+Event No.20 Eventtype:0 process
+Heu success, get object of 19.000000, using Time 0.010705
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 19.000000, using Time 0.010705
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 7, startgrid: 2, modulation: 1
+Event No.20 Eventtype:1 process
+Event No.21 Eventtype:0 process
+Heu success, get object of 12.000000, using Time 0.024680
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 12.000000, using Time 0.024680
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 3, startgrid: 18, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 4,--> phsicaledge: 7, startgrid: 2, modulation: 0
+Z: virtualedge; 4,--> phsicaledge: 12, startgrid: 2, modulation: 0
+Event No.21 Eventtype:1 process
+Event No.22 Eventtype:0 process
+Heu success, get object of 6.000000, using Time 0.015482
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 6.000000, using Time 0.015482
+ A: virtualNod; 0,--> phsicalNod: 0
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 3,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 4,--> phsicaledge: 8, startgrid: 1, modulation: 2
+Z: virtualedge; 4,--> phsicaledge: 10, startgrid: 1, modulation: 2
+Event No.22 Eventtype:1 process
+Event No.23 Eventtype:0 process
+Heu failed
+ILPSolver correct after check
+ILP failed
+Event No.24 Eventtype:0 process
+Heu failed
+ILPSolver correct after check
+ILP failed
+Event No.25 Eventtype:0 process
+Heu success, get object of 6.000000, using Time 0.009967
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 6.000000, using Time 0.009967
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 1
+Event No.25 Eventtype:1 process
+Event No.26 Eventtype:0 process
+Heu success, get object of 8.000000, using Time 0.010131
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 8.000000, using Time 0.010131
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 3,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Event No.26 Eventtype:1 process
+Event No.27 Eventtype:0 process
+Heu success, get object of 18.000000, using Time 0.009336
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 18.000000, using Time 0.009336
+ A: virtualNod; 0,--> phsicalNod: 1
+ A: virtualNod; 1,--> phsicalNod: 3
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 4
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 12, startgrid: 1, modulation: 0
+Event No.28 Eventtype:0 process
+Heu failed
+ILPSolver correct after check
+ILP failed
+Event No.27 Eventtype:1 process
+Event No.29 Eventtype:0 process
+Heu success, get object of 21.000000, using Time 0.039605
+ error, ILPSolver use unavaiable wave
+ILP success, get object of 21.000000, using Time 0.039605
+ A: virtualNod; 0,--> phsicalNod: 4
+ A: virtualNod; 1,--> phsicalNod: 1
+ A: virtualNod; 2,--> phsicalNod: 2
+ A: virtualNod; 3,--> phsicalNod: 3
+ Z: virtualedge; 0,--> phsicaledge: 10, startgrid: 1, modulation: 3
+Z: virtualedge; 1,--> phsicaledge: 11, startgrid: 1, modulation: 1
+Z: virtualedge; 2,--> phsicaledge: 11, startgrid: 1, modulation: 0
+Z: virtualedge; 2,--> phsicaledge: 15, startgrid: 1, modulation: 0
+Z: virtualedge; 4,--> phsicaledge: 7, startgrid: 2, modulation: 1
+Z: virtualedge; 5,--> phsicaledge: 4, startgrid: 11, modulation: 0
+Z: virtualedge; 5,--> phsicaledge: 15, startgrid: 11, modulation: 0
+Event No.29 Eventtype:1 process
