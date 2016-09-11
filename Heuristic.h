@@ -22,14 +22,16 @@ public:
 	vector<int> bandwidth;
 	vector<int> modtype;
 	double proccessTime, resultWeight; 
+
 };
 
 
 class Heuristic{
 private:
-	Network de, re, *ori , *aux , *demand, *resource;
+	Network  *ori , *aux , *demand, *resource;
 	Network auxGraph;
-	Event result;
+	//Network auxGraph;
+	//Event result;
 	vector<Edge> edges_before,edges_after, edges_middle;
 	vector<Nodes> nodes;
 	vector<vector<int>> FIk;//¼ÇÂ¼½ÚµãÓ³Éä

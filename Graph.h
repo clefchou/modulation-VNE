@@ -71,7 +71,9 @@ class Network{
 				printf("\n");
 			}
 		}
+	
 };
+
 
 class Event{
     public:
