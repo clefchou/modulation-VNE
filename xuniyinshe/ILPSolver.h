@@ -54,7 +54,7 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 					}
 	    for(int i = 0; i < d->n; i++)
 		    for(int k = 0; k < r->n; k++)
-			    BP += r->ck[k] * d->vertexWeight[i] * A[i][k];
+			   ;// BP += r->ck[k] * d->vertexWeight[i] * A[i][k];
 	    model.add(IloMinimize(environment, BP));
 		
 
@@ -155,6 +155,7 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 						model.add(constraint <= 0);
 					}
 		//14
+					
         for(int mn = 0; mn < r->m; mn++)
 		    for(int a = 0; a < r->edges[mn].bandwidth ; a++)
 			    for(int mod = 0; mod < r->mod; mod++){
@@ -296,6 +297,7 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 	solver.end();
     model.end();
     environment.end();
+	BP.end();
 
 	return ret;
 }

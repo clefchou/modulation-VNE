@@ -2,7 +2,7 @@
 #include "UsTime.h"
 #include "Graph.h"
 
-
+#define Ucmn 1000000000
 
 static int nodeID = -1;
 static vector<Nodes> nodes_temp;
@@ -10,17 +10,31 @@ bool sort_nodes(const Nodes &n1, const Nodes &n2){				//排序函数，用来对sort进行
 	return n1.degree>n2.degree;
 }
 
+bool sort_edges(const Edge &e1, const Edge &e2) {
+
+	int degree_e1, degree_e2;
+	if (e1.head == nodeID)
+		degree_e1 = nodes_temp[e1.tail].degree;
+	if (e1.tail == nodeID)
+		degree_e1 = nodes_temp[e1.head].degree;
+	if (e2.head == nodeID)
+		degree_e2 = nodes_temp[e2.tail].degree;
+	if (e2.tail == nodeID)
+		degree_e2 = nodes_temp[e2.head].degree;
+	return degree_e1<degree_e2;
+}
+bool sort_edges_bandwidth(const Edge &e1, const Edge &e2){
+	
+	return e1.bandwidth>e2.bandwidth;
+}
+
 
 void Heuristic::sortnetwork(){
-	
-	bool sort_edges(const Edge &e1, const Edge &e2);
-
 	for(int vertexID = 0; vertexID < demand->n; vertexID++){
 		Nodes tempnode;
 		tempnode.vertexID = vertexID, tempnode.degree = demand->degree[vertexID];
 		nodes.push_back(tempnode);
-	}
-	
+	}	
 	sort(nodes.begin(),nodes.end(),sort_nodes);
 	for(int k = 0; k < demand->n; k++){
 		int edge_reserve = demand->edges.size();	//随着demand里edges被选入，vector大小会变小，所以判断条件要跟着变小
@@ -40,64 +54,62 @@ void Heuristic::sortnetwork(){
 		for (int i = 0; i < edges_middle.size(); i++){
 			edges_after.push_back(edges_middle[i]);
 		}
-		edges_middle.clear();
+		edges_middle.clear();		
 	}	
 }
-	//sort(nodes.begin(),nodes.end(),demand->degree(n));
 
-
- bool sort_edges(const Edge &e1, const Edge &e2){
-
-	int degree_e1, degree_e2;
-	if (e1.head == nodeID)
-		degree_e1 = nodes_temp[e1.tail].degree;
-	if (e1.tail == nodeID)
-		degree_e1 = nodes_temp[e1.head].degree;
-	if (e2.head == nodeID)
-		degree_e2 = nodes_temp[e2.tail].degree;
-	if (e2.tail == nodeID)
-		degree_e2 = nodes_temp[e2.head].degree;
-	return degree_e1>degree_e2;
+void Heuristic::sortnetwork_bandwidth(){
+		
+		int edge_reserve = demand->edges.size();	//随着demand里edges被选入，vector大小会变小，所以判断条件要跟着变小
+		vector<Edge>::iterator it = demand->edges.begin();
+		for(int ij = 0 ; ij < demand->edges.size(); ij++){
+			if(demand->edges.size()){
+				edges_middle.push_back(demand->edges[ij]);
+				demand->edges.erase(it);
+				ij--;			//每次删掉内容后 ij对应的值也要回退一格，因为整个vector都被压缩了一格
+			}
+			else
+				it++;
+		}
+		sort(edges_middle.begin(),edges_middle.end(),sort_edges_bandwidth);			//创建中间变量，对边的占用带宽进行排序，再把它加进一总的vector里面
+		for (int i = 0; i < edges_middle.size(); i++){
+			edges_after.push_back(edges_middle[i]);
+		}
 }
 
-Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int g){
-	//int mod = demand->mod;
-	vector<int> r_in, r_mj, d_in, d_mj;
+
+
+
+Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int g,int maxdistance){
+	vector<int> r_in, r_mj;
 	int lanmda_v_i = 0; 
 	for(int k = 0; k < resource->m; k++){
 		r_in.push_back(100000);
 		r_mj.push_back(100000);	
-		d_in.push_back(0);
-		d_mj.push_back(0);//公式17的r_in,r_jn 未完成
 	}
-
-
-//	int F_g_1 = resource->maxBandwidth - mod +1;
-//	for (int a = 0; a < F_g_1; a++){
-		{auxGraph.edges.clear();
+		auxGraph.edges.clear();
 		auxGraph.ck.clear();
 		auxGraph.degree.clear();
 		auxGraph.vertexWeight.clear();
-		
-		}
-		 auxGraph = *resource ;
-
-
+		auxGraph = *resource ;
 
 		int nshift = auxGraph.n, mshift = auxGraph.m;
 		int n_number= auxGraph.n, m_number = auxGraph.m;
 			for(int i = 0; i < n_number; i++){
 				
-				auxGraph.vertexWeight.push_back(auxGraph.vertexWeight[i]);		
+				auxGraph.vertexWeight.push_back(auxGraph.vertexWeight[i]);
 				auxGraph.degree.push_back(auxGraph.degree[i]);
 				auxGraph.ck.push_back(auxGraph.ck[i]);
 				auxGraph.n += 1;
 			}
+			vector<Edge>::iterator it = auxGraph.edges.begin();
 			for(int ij = 0; ij < m_number; ij++){	
-				vector<Edge>::iterator it = auxGraph.edges.begin();
+				
 				int if_cut_the_edge = 0;
 				
 				int dest_a = a + g;
+				if(auxGraph.edges[ij].distance > maxdistance)			//判断边的物理距离是否足够；
+					if_cut_the_edge = 1;
 				for( int ak = a; ak < dest_a; ak++){
 					if(auxGraph.edges[ij].wave[ak] != true)
 						if_cut_the_edge = 1;
@@ -111,6 +123,7 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 				else
 					it++;
 			}													//删除了容量不够的边，接下来把所有边翻倍形成新图
+			m_number = auxGraph.edges.size();
 			for(int ij = 0; ij < m_number; ij++){
 				Edge te = auxGraph.edges[ij];
 				te.head += nshift;
@@ -120,13 +133,13 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 				auxGraph.edges.push_back(te);
 				auxGraph.maxBandwidth = max(auxGraph.maxBandwidth, te.bandwidth);
 				auxGraph.m += 1;
-
+				
 				auxGraph.edges[ij].head += nshift;				//让初始的点连到新的图的新点上去
 
 			}
 		
 			//接下来要根据 i,j是否被映射选择增加虚边的数量，如果被映射了只增加一条，没有的话就全加上。
-			
+
 			auxGraph.n +=2;	//加上了两个虚拟节点
 			int FIk_i = -1, FIk_j = -1, if_node_embeded = 0;	//初始化映射flag 假定没有被映射到任何一点上
 			for (int k = 0; k < resource->n; k++){
@@ -136,9 +149,13 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						FIk_i = k;
 			}
 			if(FIk_i >= 0){
+				if(resource->vertexWeight[FIk_i]>demand->vertexWeight[demand_tail]){
 				Edge *te = new Edge(auxGraph.n-2,FIk_i,auxGraph.maxBandwidth ,r_in[FIk_i],0);	//为了让i,j编号不与实际节点k编号搞混，另j为最后一个节点，i为倒数第二个
 				auxGraph.edges.push_back(*te);
 				auxGraph.m +=1;
+				delete te;
+				}
+				
 			}			//如果i点被映射过了，那就只加一条被映射的边↑；如果没有被映射过，那就把其他所有边都加上去↓
 			else{
 				for(int k = 0; k < resource->n; k++){
@@ -146,30 +163,32 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						if(FIk[demand_k][k] == 1 )
 							if_node_embeded = 1;
 					}
-					int dmn,rin = 0;
+					int dmn = 0;
+					double rin = 0;
 					if(if_node_embeded == 0){
+						if(resource->vertexWeight[k]>demand->vertexWeight[demand_tail]){
 					Edge *te = new Edge(auxGraph.n-2,k,auxGraph.maxBandwidth ,r_in[k],0);
-/************************************************************************
+/************************************************************************/
 					int count=0;
 					for (int edgeID = 0; edgeID < auxGraph.m; edgeID++){
 						
-			            if(auxGraph.edges[edgeID].head == k||auxGraph.edges[edgeID].tail == k){
+			            if(auxGraph.edges[edgeID].tail == k||auxGraph.edges[edgeID].head == k){
 						    count++;
-							for(int waveID = 0; waveID+te->bandwidth <= resource->maxBandwidth; waveID++)
+							for(int waveID = 0; waveID+g-1<= te->bandwidth; waveID++)
 							rin ++;//怎么表达?
 						}
 					}
 					if (count != 0)
 						rin=rin/count;		   
-					rin = pow(float(rin),resource->degree[k]);
+					rin = pow(double(rin),-resource->degree[k]);
 					
 					
-					int Dis = 0,aa=0,mid=0; //aa记录deta(v,n)的个数
+					int Dis = 0,aa=0,mid=-1; //aa记录deta(v,n)的个数
 					for(int ij = 0 ; ij < edges_after.size(); ij++){
 						
-			           if(edges_after[ij].head == nodes[k].vertexID ){
+			           if(edges_after[ij].tail == k/*nodes[k].vertexID */){                      //？？？？？这里一直有问题 什么意思？？？ 2016/9/4
 						     for(int kk = 0; kk < resource->n; kk++){
-								 if(FIk[edges_after[ij].tail][kk] == 1 ){
+								 if(FIk[edges_after[ij].head][kk] == 1 ){
 							         if_node_embeded = 1;
 								     mid=kk;//用mid记录节点v映射的物理节点
 								     break;
@@ -177,34 +196,28 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						      }	
 							 if(if_node_embeded = 1){
 								int dis = findpath(resource,k,mid);//调用一次find找到Dis(M,n),
+								if(dis != 0){
 								Dis+=dis;
 								aa++;
+								}
 							 }
 					    }
-
-			           if(edges_after[ij].tail == nodes[k].vertexID ){
-						     for(int kk = 0; kk < resource->n; kk++){
-						           if(FIk[edges_after[ij].head][kk] == 1 ){
-							           if_node_embeded = 1;
-								       mid=kk;//用mid记录节点v映射的物理节点
-								       break;
-						           	}
-						     }
-							if( if_node_embeded = 1){
-								int dis = findpath(resource,k,mid);//调用一次find找到Dis(M,n),
-								Dis+=dis;
-								aa++;
-							}
-						}  							  	
+					}	
 					if( Dis != 0)
-					 dmn=Dis/aa;	
-                    int cmn= rin * dmn;
+						dmn=Dis/aa;
+					else
+						dmn = 1;
+                    double cmn= rin * dmn*Ucmn;
+					if (cmn == 0)
+						cmn = 10000;
 					te->cmn = cmn;
 
-					}
-					*///************************************************************************
+					///************************************************************************
 					auxGraph.edges.push_back(*te);
 					auxGraph.m +=1;
+					delete te;
+					}
+						
 					}
 					if_node_embeded = 0;
 				}
@@ -212,10 +225,14 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 
 
 			if(FIk_j >= 0){
+				if(resource->vertexWeight[FIk_j]>demand->vertexWeight[demand_head]){
 				Edge *te = new Edge(FIk_j+resource->n,auxGraph.n-1,auxGraph.maxBandwidth ,r_mj[FIk_j],0);	//复制的图的终点，每个节点编号都要shift。
 				auxGraph.edges.push_back(*te);
 				auxGraph.m +=1;
-				
+				delete te;
+				}
+				else
+					printf("????????????????");
 			}			//如果i点被映射过了，那就只加一条被映射的边↑；如果没有被映射过，那就把其他所有边都加上去↓
 			else{
 				for(int k = 0; k < resource->n; k++){
@@ -224,45 +241,31 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 							if_node_embeded = 1;
 					}
 				
-					int dmn,rmj = 0;
+					int dmn = 0;
+					double rmj = 0;
 					if(if_node_embeded == 0){
+						if(resource->vertexWeight[k]>demand->vertexWeight[demand_head]){
 					Edge *te = new Edge(k+resource->n,auxGraph.n-1,auxGraph.maxBandwidth ,r_mj[k],0);
-/************************************************************************
+/************************************************************************/
 					int count=0;
 					for (int edgeID = 0; edgeID < auxGraph.m; edgeID++){
 						
-			            if(auxGraph.edges[edgeID].head == k||auxGraph.edges[edgeID].tail == k){
+			            if(auxGraph.edges[edgeID].tail == k||auxGraph.edges[edgeID].head == k){
 						    count++;
-							for(int waveID = 0; waveID+te->bandwidth <= resource->maxBandwidth; waveID++)
+							for(int waveID = 0; waveID+g-1<= te->bandwidth; waveID++)
 							rmj ++;//怎么表达?
 						}
 					}
 					if (count != 0)
 						rmj=rmj/count;		   
-					rmj = pow(float(rmj),resource->degree[k]);
+					rmj = pow(double(rmj),-resource->degree[k]);
 					
 					
-					int Dis = 0,aa=0,mid=0; //aa记录deta(v,n)的个数
+					int Dis = 0,aa=0,mid=-1; //aa记录deta(v,n)的个数
 					for(int ij = 0 ; ij < edges_after.size(); ij++){
-						
-			           if(edges_after[ij].head == nodes[k].vertexID ){
+			           if(edges_after[ij].head == k/* nodes[k].vertexID*/ ){
 						     for(int kk = 0; kk < resource->n; kk++){
-								 if(FIk[edges_after[ij].tail][kk] == 1 ){
-							         if_node_embeded = 1;
-								     mid=kk;//用mid记录节点v映射的物理节点
-								     break;
-						         }
-						      }	
-							 if(if_node_embeded = 1){
-								int dis = findpath(resource,k,mid);//调用一次find找到Dis(M,n),
-								Dis+=dis;
-								aa++;
-							 }
-					    }
-
-			           if(edges_after[ij].tail == nodes[k].vertexID ){
-						     for(int kk = 0; kk < resource->n; kk++){
-						           if(FIk[edges_after[ij].head][kk] == 1 ){
+						           if(FIk[edges_after[ij].tail][kk] == 1 ){
 							           if_node_embeded = 1;
 								       mid=kk;//用mid记录节点v映射的物理节点
 								       break;
@@ -270,24 +273,35 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						     }
 							if( if_node_embeded = 1){
 								int dis = findpath(resource,k,mid);//调用一次find找到Dis(M,n),
+								if(dis != 0){
 								Dis+=dis;
 								aa++;
+								}
 							}
-						}  							  	
-					if( Dis != 0)
-					 dmn=Dis/aa;	
-                    int cmn= rmj * dmn;
-					te->cmn = cmn;
+						}  		
 
 					}
-*///**********************************************************
+					if( Dis != 0)
+					 dmn=Dis/aa;	
+					else
+						dmn = 1;
+                    double cmn= rmj * dmn*Ucmn;
+					if (cmn == 0)
+						cmn = 10000;
+					te->cmn = cmn;
+
+					
+///**********************************************************
 					auxGraph.edges.push_back(*te);
 					auxGraph.m +=1;
+					delete te;
+						}
 					}
 					if_node_embeded = 0;
 				}
 			}
-		
+			r_in.swap(vector<int>());
+			r_mj.swap(vector<int>());
 		return auxGraph;
 			
 }
@@ -390,134 +404,152 @@ Heu_return Heuristic::work(){
 	UsClock clk;
 	clk.setStartTime();
 
-	Event ret = Event(0, 0, 0, resource);
+	//Event *ret = new Event(0, 0, 0, resource);
 	Heu_return heu_ret;
-	for(int ij = 0; ij < edges_after.size(); ij++){
-		
-		int e_has_been_embeded = 0;
-		for(int k = 0; k < resource->n; k++){
-			if(FIk[edges_after[ij].head][k] == 1 || FIk[edges_after[ij].tail][k] == 1)
-				e_has_been_embeded++;
-		}
-				{vector<int> t;
+	heu_ret.isSuccess = 1;
+	for (int ij = 0; ij < edges_after.size(); ij++) {
+
+		vector<int> t;
 		heu_ret.demand_tail.push_back(edges_after[ij].tail);
 		heu_ret.demand_head.push_back(edges_after[ij].head);
 		heu_ret.edge_head.push_back(t);
 		heu_ret.edge_tail.push_back(t);
 		heu_ret.total_distance.push_back(100000000);
-		heu_ret.grid_a.push_back(-1);	
+		heu_ret.grid_a.push_back(-1);
 		heu_ret.physical_distance.push_back(0);				//初始化结果类
 		heu_ret.bandwidth.push_back(-1);
-		heu_ret.modtype.push_back(-1);
-		}
+		heu_ret.modtype.push_back(-2);
 
-		//if(e_has_been_embeded == 2)							//这一段判断是否已经被映射，如果两个点都被映射过了，则这条边已被映射，continue		
-			//continue;
-		
-
-		int flag_FIk_same_point = 0 , same_point_ID;		//判断是否映射到同一点
+		int flag_FIk_same_point = 0, same_point_ID;		//判断是否映射到同一点
 		int DijisSuccess;
-		for (int mod = 16; mod > 1; mod = mod/2){ 
-			int g = ceil(double(edges_after[ij].bandwidth)/(mod));
+		int modtype = 4;
+		for (int mod = 3; mod >= 0; mod--) {
+			modtype--;
+			int g = ceil(float(float(edges_after[ij].bandwidth) / (mod + 1)));
 			int F_g_1 = resource->maxBandwidth - g + 1;	//这里擅自取了F=maxBandwidth 循环多了应该也不影响，能找到会在之前就找到，找不到循环到底也找不到
-			for (int a = 1; a < F_g_1; a++){
+			for (int a = 0; a < F_g_1; a++) {
 				heu_ret.grid_a[ij] = a;
-
-				auxGraph_generate(edges_after[ij].head,edges_after[ij].tail,a,g);	//生成辅助图
-
-				if(flag_FIk_same_point == 1){
+				int maxdistance = resource->moddistance[modtype];
+				
+				if (flag_FIk_same_point == 0)
+					auxGraph_generate(edges_after[ij].head, edges_after[ij].tail, a, g, maxdistance);	//生成辅助图
+				else
+				{
 					flag_FIk_same_point = 0;
 					int m_number = auxGraph.m;
-					for(int mn = 0; mn < m_number; mn++){	
-						vector<Edge>::iterator it = auxGraph.edges.begin();
-						if(mn == same_point_ID){
+					vector<Edge>::iterator it = auxGraph.edges.begin();
+					for (int mn = 0; mn < m_number; mn++) {
+						if (auxGraph.edges[mn].tail == same_point_ID &&auxGraph.edges[mn].head == auxGraph.n - 1) {
+							printf("delete same point: %d", same_point_ID);
 							auxGraph.edges.erase(it);
-							mn--;
-						}	
+							auxGraph.m--;
+							//mn--;
+						}
 						else
 							it++;
-					}				
+					}
 				}							//删除其中一条虚边，保证不会映射到同一个点
 
-				 DijisSuccess = findpath();		//根据生成辅助图寻找最短路
-				if (!DijisSuccess)
+				DijisSuccess = findpath();		//根据生成辅助图寻找最短路
+				if (!DijisSuccess) {
+
 					continue;
-				else{
-					if(DijisSuccess < heu_ret.total_distance[ij]){
+				}
+				else {
+					if (DijisSuccess <= heu_ret.total_distance[ij]) {
 						heu_ret.total_distance[ij] = DijisSuccess;
 						heu_ret.edge_head[ij].clear();
 						heu_ret.edge_tail[ij].clear();			//结果更小，删除上一次保留的结果
 
-							int j_m ,i_n ,temp = auxGraph.n-1;
-							j_m = last_vertex_ID[auxGraph.n-1];
-							heu_ret.edge_head[ij].push_back(auxGraph.n-1);
-							heu_ret.edge_tail[ij].push_back(j_m);
-					
-							do{
-								i_n = temp;
-								temp = last_vertex_ID[temp];
-								heu_ret.edge_head[ij].push_back(temp);
-								heu_ret.edge_tail[ij].push_back(last_vertex_ID[temp]);
+						int j_m, i_n, temp = auxGraph.n - 1;
+						j_m = last_vertex_ID[auxGraph.n - 1];
+						heu_ret.edge_head[ij].push_back(auxGraph.n - 1);
+						heu_ret.edge_tail[ij].push_back(j_m);
 
-
-							}while(last_vertex_ID[temp] != auxGraph.n-2);
+						do {
 							i_n = temp;
+							temp = last_vertex_ID[temp];
+							heu_ret.edge_head[ij].push_back(temp);
+							heu_ret.edge_tail[ij].push_back(last_vertex_ID[temp]);
+						} while (last_vertex_ID[temp] != auxGraph.n - 2);
 
-							if(i_n + resource->n == j_m){			//两个点I,J映射到同一个物理节点的情况
-								flag_FIk_same_point = 1;
-								same_point_ID = j_m;
-								a--;
-								continue;
-							}
 
-							for (int demand_k = 0; demand_k<resource->n;demand_k++){
-								if(demand_k == j_m || demand_k == j_m-resource->n)
-								FIk[edges_after[ij].head][demand_k]=1;
+						i_n = temp;
+
+						if (i_n + resource->n == j_m) {			//两个点I,J映射到同一个物理节点的情况
+							printf("same_point = %d,a = %d\n!!!!!!!!!!!!!!!!!!", i_n, a);
+							flag_FIk_same_point = 1;
+							same_point_ID = j_m;
+							heu_ret.total_distance[ij] = 100000000;
+							if (a == F_g_1 - 1) {
+								heu_ret.isSuccess = 0;
+								break;
 							}
-							for (int demand_k = 0; demand_k<resource->n;demand_k++){
-								if(demand_k == i_n || demand_k == i_n-resource->n)
-								FIk[edges_after[ij].tail][demand_k]=1;
-							}														//将节点映射记录下来
+							a--;
+							continue;
 						}
-					break;
+
+						
 					}
-			}
-			int physical_distance = 0;
-			if(DijisSuccess){				//如果找到了一条路径，break 并将资源情况更新
-				for(int mn = 0; mn < resource->m; mn++){
-					for(int k = 0; k < heu_ret.edge_head[ij].size(); k++){
-						if(resource->edges[mn].head == heu_ret.edge_head[ij][k] ||resource->edges[mn].head == heu_ret.edge_head[ij][k]-resource->n)
-							if(resource->edges[mn].tail == heu_ret.edge_tail[ij][k] ||resource->edges[mn].tail == heu_ret.edge_tail[ij][k]-resource->n){
-								physical_distance += resource->edges[mn].distance;
-								for(int a = heu_ret.grid_a[ij]; a < heu_ret.grid_a[ij]+g; a++){
-									resource->edges[mn].wave[a] = false;
-								}
-							}
-					}					
+
+					break;
 				}
-				int mod_num = 0-2,tempmod = mod;
-				do{tempmod = tempmod/ 2;
-					mod_num++ ;
-				}while(tempmod != 0);
-				if( physical_distance >= resource->moddistance[mod_num])
-					continue;
-				else{
+			}
+
+
+			int physical_distance = 0;
+			if (DijisSuccess) {				//如果找到了一条路径，break 并将资源情况更新
+				for (int mn = 0; mn < resource->m; mn++)
+					for (int k = 1; k < heu_ret.edge_head[ij].size() - 1; k++)		//不能从0开始 第一个点不算，最后一个点也不能算
+						if (resource->edges[mn].head == heu_ret.edge_head[ij][k] || resource->edges[mn].head == heu_ret.edge_head[ij][k] - resource->n)
+							if (resource->edges[mn].tail == heu_ret.edge_tail[ij][k] || resource->edges[mn].tail == heu_ret.edge_tail[ij][k] - resource->n) {
+								physical_distance += resource->edges[mn].distance;
+								for (int a = heu_ret.grid_a[ij]; a < heu_ret.grid_a[ij] + g; a++)
+									resource->edges[mn].wave[a] = false;
+							}
+
+
+
+				//		resource->vertexWeight[edges_after[ij].head] -= demand->vertexWeight[edges_after[ij].head];
+				//		resource->vertexWeight[edges_after[ij].tail] -= demand->vertexWeight[edges_after[ij].tail];
+
+
+				if (physical_distance >= resource->moddistance[mod]) {
+					if (mod == 0) {
+						heu_ret.isSuccess *= 0;
+						printf("physical failed!!\n");
+						continue;
+					}
+					else
+						continue;
+				}
+				else {
+					for (int demand_k = 0; demand_k < resource->n; demand_k++) {
+						if (demand_k == heu_ret.edge_head[ij][1] || demand_k == heu_ret.edge_head[ij][1] - resource->n)
+								FIk[edges_after[ij].head][demand_k] = 1;
+						}
+					int heusize = heu_ret.edge_tail[ij].size();
+						for (int demand_k = 0; demand_k < resource->n; demand_k++) {
+							if (demand_k == heu_ret.edge_tail[ij][heusize-2] || demand_k == heu_ret.edge_tail[ij][heusize-2] - resource->n)
+								FIk[edges_after[ij].tail][demand_k] = 1;
+						}														//将节点映射记录下来
 					heu_ret.physical_distance[ij] = physical_distance;
 					heu_ret.modtype[ij] = mod;
 					heu_ret.bandwidth[ij] = g;
-					printf("******total distance = %d\n",heu_ret.total_distance[ij]);
+					printf("******total distance = %d\n", heu_ret.total_distance[ij]);
+					heu_ret.isSuccess *= 1;
 					break;
 				}
 			}
-			if(mod == 2){
-				heu_ret.isSuccess = 0;
-				return heu_ret;
-			}
+
 		}
 	}
+	for (int is = 0; is < heu_ret.edge_head.size(); is++)			//判断是否findpath全部成功，如果有一个不成功则映射失败。
+		if (heu_ret.edge_head[is].size() == 0)
+			heu_ret.isSuccess = 0;
 	clk.setEndTime();
 	heu_ret.proccessTime = clk.getTime();
-	heu_ret.isSuccess = 1;
+
 	return heu_ret;
 }
 
@@ -525,13 +557,12 @@ Heu_return Heuristic::work(){
 
 
 Heuristic::Heuristic(Network *d, Network *r, FILE *lf){
-	de = *d, re = *r ,ori = r;
+	ori = r;
 	resource = new Network (*r);
-	demand = new Network (*d);
+	demand = new Network (*d);	
 	resource->mod++;
 	logFile = lf;
-	result.isSuccess = result.proccessCircle = result.proccessTime = result.proccessTreeNode = result.resultWeight = 0;
-	
+
 	for(int nodei=0;nodei<demand->n;nodei++){
 		vector<int> tempFIk;
 		FIk.push_back(tempFIk);
@@ -542,64 +573,29 @@ Heuristic::Heuristic(Network *d, Network *r, FILE *lf){
 		}
 	}
 	
-	sortnetwork();
-	for (int i = 0; i < resource->n; i++){
-		vector<int> tempneighbor;
-		resource->neighbor.push_back(tempneighbor);
-	}
+	sortnetwork_bandwidth();
 
-/*	for (int i = 0; i < resource->n; i++)				//定义每个节点的邻居节点
-		for( int k = 0; k < resource->n; k++)
-			resource->neighbor[i].push_back(0);*/
-	for(int k = 0; k < resource->m; k++){
-		int head = resource->edges[k].head;
-		int tail = resource->edges[k].tail;
-		resource->neighbor[head].push_back(tail);
-		resource->neighbor[tail].push_back(head);
-	}
-	for(int i = 0; i < resource->n; i++){
-		sort( resource->neighbor[i].begin(),resource->neighbor[i].end());
-		resource->neighbor[i].erase( unique(resource->neighbor[i].begin(),resource->neighbor[i].end()),resource->neighbor[i].end());
-		
-	}
 }
 
 Heuristic::~Heuristic(){
 
-	
-	delete resource;
-	
+	edges_before.swap(vector<Edge>());
+	edges_after.swap(vector<Edge>());
+	edges_middle.swap(vector<Edge>());
 //	fclose(optimalData);
 }
 
 Event Heuristic::solveByHeuristic(Network *d, Network *r, FILE *logFile){
 	Event ret = Event(0, 0, 0, r);
-	int numILPSuccess, numILPBlock, numHeuSuccess;
-		double totalILPTime, totalILPWeight, totalHeuTime, totalHeuWeight, HeuWeight;
+	int numILPSuccess, numILPBlock, numHeuSuccess=0;
+		double totalILPTime=0, totalILPWeight=0, totalHeuTime, totalHeuWeight, HeuWeight;
 		Network original_resource = *r;
 		Network *resource_Hr = &original_resource;
 			 Heu_return heu_ret;
 			 heu_ret = work();
 			 HeuWeight = 0;
-			 if(heu_ret.isSuccess){
-				 int n = d->edges.size();
-				for(int ij = 0; ij < n; ij++){
-					for (int mn = 0; mn < resource_Hr->edges.size(); mn++){
-						for (int k = 0; k < heu_ret.edge_head[ij].size(); k++){
-							if(resource_Hr->edges[mn].head == heu_ret.edge_head[ij][k] || resource_Hr->edges[mn].head == heu_ret.edge_head[ij][k]-resource_Hr->n)
-								if(resource_Hr->edges[mn].tail == heu_ret.edge_tail[ij][k] || resource_Hr->edges[mn].tail == heu_ret.edge_tail[ij][k]-resource_Hr->n)
-									for(int ak = 0; ak < heu_ret.bandwidth[ij]; ak++){
-										HeuWeight += resource_Hr->edges[mn].cmn*heu_ret.bandwidth[ij];
-										int wave_ak = heu_ret.grid_a[ij] + ak;
-										resource_Hr->edges[mn].wave[wave_ak] = false;
-									}
-						}
-					}
-				}
-			 }
-			 
 
-			 if(heu_ret.isSuccess){
+			  if(heu_ret.isSuccess){
 				numHeuSuccess += 1;
 				totalILPTime += heu_ret.proccessTime;
 				totalILPWeight += HeuWeight;
@@ -614,30 +610,37 @@ Event Heuristic::solveByHeuristic(Network *d, Network *r, FILE *logFile){
 					}
 				}
 
+			 if(heu_ret.isSuccess){
+
+				for(int ij = 0; ij < demand->n; ij++)					
+					for(int k = 0; k < resource->n; k++)				
+						if(FIk[ij][k] == 1){
+							HeuWeight += demand->vertexWeight[ij]*resource->ck[k];
+							printf("**** HeuWeight = %f, vertexID: %d, vertexWeight : %d, ck = : %f\n",HeuWeight,ij, demand->vertexWeight[ij],resource->ck[k]);
+						}
+			 }
+			 
 
 				for(int ij = 0; ij < heu_ret.demand_tail.size(); ij++){
-					printf("Virtual node: %d, %d ==> Physical node: %d, %d\n",heu_ret.demand_tail[ij],heu_ret.demand_head[ij],heu_ret.edge_head[ij][heu_ret.edge_head[ij].size()-1],heu_ret.edge_tail[ij][0]);
-
-
+					printf("Virtual node: %d, %d ==> Physical node: %d, %d",heu_ret.demand_tail[ij],heu_ret.demand_head[ij],heu_ret.edge_head[ij][heu_ret.edge_head[ij].size()-1],heu_ret.edge_tail[ij][0]);
+					printf("	modtype: %d , start grid : %d ,bandwidth: %d\n",heu_ret.modtype[ij],heu_ret.grid_a[ij],heu_ret.bandwidth[ij]);
+					for(int pk = 0; pk < heu_ret.edge_tail[ij].size(); pk++)
+						printf("--%d",heu_ret.edge_tail[ij][pk]);
+					printf("\n");
 				}
 			}
-			 else
+			 else{
 					fprintf(logFile, "Heu failed\n");
+					printf("\n********************************\n embedding failed!\n");
+					
+			 }
 			 ret.resultWeight = HeuWeight;
+
+if(heu_ret.isSuccess){
 			for(int ij = 0; ij < ret.demand->edges.size(); ij++)
 				for(int b = 0; b < ret.demand->edges[ij].wave.size(); b++)
 					ret.demand->edges[ij].wave[b] = false;
 
-			for(int k = 0; k < heu_ret.modtype.size(); k++){
-				if(heu_ret.modtype[k] == 2)
-					heu_ret.modtype[k] = 0;
-				if(heu_ret.modtype[k] == 4)
-					heu_ret.modtype[k] = 1;
-				if(heu_ret.modtype[k] == 8)
-					heu_ret.modtype[k] = 2;
-				if(heu_ret.modtype[k] == 16)
-					heu_ret.modtype[k] = 3;
-			}
 			for(int i = 0; i < 10; i++)
 		      for(int j = 0; j < 20; j++)
 				  for (int a =0; a < 30; a++)
@@ -653,7 +656,7 @@ Event Heuristic::solveByHeuristic(Network *d, Network *r, FILE *logFile){
 		for(int mn = 0; mn < r->m; mn++){
 			for(int ij = 0; ij < d->m; ij++){
 				for( int k = 0; k < heu_ret.edge_head[ij].size(); k++){
-					if(r->edges[mn].head == heu_ret.edge_head[ij][k] )
+					if(r->edges[mn].head == heu_ret.edge_head[ij][k])
 						if(r->edges[mn].tail == heu_ret.edge_tail[ij][k]){
 							int a_start = heu_ret.grid_a[ij];
 							for(int a = heu_ret.grid_a[ij]; a < heu_ret.grid_a[ij] + heu_ret.bandwidth[ij]; a++){
@@ -677,13 +680,9 @@ Event Heuristic::solveByHeuristic(Network *d, Network *r, FILE *logFile){
 			for(int i = 0; i < d->n; i++)
 				if(ret.a[i][k] == 1)
 					ret.demand->vertexWeight[k] += d->vertexWeight[i];
-		
+}
 		ret.isSuccess = heu_ret.isSuccess;
+
 		return ret;
-
-					  
-					  
-					  
-
-
+		
 }

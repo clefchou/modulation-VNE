@@ -71,21 +71,24 @@ class Network{
 				printf("\n");
 			}
 		}
+	
 };
+
 
 class Event{
     public:
         bool type;
-        int arrivalTime, ID;
+        double arrivalTime;
+		int ID;
 		int isSuccess;
 		double proccessTime, resultWeight; 
 		int proccessTreeNode, proccessCircle;
 		//vector<vector<int>> a;
 		int a[10][10];
 		int b[10][20][30][4];
-		//int c[10][20][30];
-		//int d[10][30];
-		//int e[10][4];
+		int c[10][20][30];
+		int d[10][30];
+		int e[10][4];
         Network *demand;
         Event() {
 			demand = NULL;

@@ -21,8 +21,9 @@ void main(){
 
 		Network *G = new Network("inputData\\whole_r_sixnodes.txt");
 		Center ct(G, lamda, mu);
-
+		
 		newDemandGenerate();
+		
 		ct.push(Event(0, 0, 0, new Network("inputData\\demand_r.txt")));
 		while(!ct.empty()){
 			ct.pop();
