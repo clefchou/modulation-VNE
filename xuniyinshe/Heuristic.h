@@ -22,14 +22,16 @@ public:
 	vector<int> bandwidth;
 	vector<int> modtype;
 	double proccessTime, resultWeight; 
+
 };
 
 
 class Heuristic{
 private:
-	Network de, re, *ori , *aux , *demand, *resource;
+	Network  *ori , *aux , *demand, *resource;
 	Network auxGraph;
-	Event result;
+	//Network auxGraph;
+	//Event result;
 	vector<Edge> edges_before,edges_after, edges_middle;
 	vector<Nodes> nodes;
 	vector<vector<int>> FIk;//¼ÇÂ¼½ÚµãÓ³Éä
@@ -41,8 +43,8 @@ private:
 	
 	
 	double solve();
-	void sortnetwork();
-	Network auxGraph_generate(int demand_head, int demand_tail, int a, int mod);
+	void sortnetwork(int type);
+	Network auxGraph_generate(int demand_head, int demand_tail, int a, int g, int maxdistance);
 	int findpath();
 	int findpath(Network *r,int source_vertexID, int dest_vertexID);
 	

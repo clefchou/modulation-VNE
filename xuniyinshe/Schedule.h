@@ -4,7 +4,8 @@
 #include "Heuristic.h"
 
 #define WAIT 5
-#define DEMANDNUM 10
+#define DEMANDNUM 10000
+#define CHECKNUM 1
 
 int uniform(int a, int b){
 	return a + rand()%(b-a+1);
@@ -51,23 +52,28 @@ void topoGenerate(char route[], int n, int mod, int maxWeight,int maxdistance){
 		topo[i][randomi] = 1;
 	}
 	for(int i = 0; i < m - n + 1; i++){
-		int u = rand()%n, v;
-		int uvalready = 0;
+		int u, v;
+		int uvalready = 0 ,ucount = 0;
 		do{
+			u = rand()%n;
 			uvalready = 0;
 			v = rand()%n;
+			ucount++;
 			if(topo[u][v] == 1)
 				uvalready = 1;
-			
+			//if(ucount > n){		//这里容易产生死循环，如果v = 1而1的0,2,3全都满了，就会一直在里面转
+				//u=(u+1)%n;
+				//break;
+			//}
 		}while(u == v || uvalready);
 	    topo[u][v] = 1;
 	}
-	for(int i = 0 ; i < 4; i++)
+	for(int i = 0 ; i < 4; i++) 
 		for(int j = 0; j < 4; j++)
 			if(topo[i][j] == 1)
 		       fprintf(out, "%d %d %d %d %d\n", i, j, uniform(1, 10), maxWeight, maxdistance);
 	fclose(out);
-	//system("type D:\\毕设\\xuni\\inputData\\demand_r.txt>>D:\\毕设\\xuni\\inputData\\alldemand.txt");
+	system("type \inputData\\demand_r.txt>>\inputData\\alldemand.txt");
 }
 
 double U_Random()   /* 产生一个0~1之间的随机数 */
@@ -114,20 +120,24 @@ class Center{
     private:
 		int eventCount;
 		int numILPSuccess, numILPBlock, numHeuSuccess;
-		double totalILPTime, totalILPWeight, totalHeuTime, totalHeuWeight, HeuWeight;
+		double totalILPTime, totalILPWeight, totalHeuTime, totalHeuWeight, HeuWeight,totalmod,totaldistance;
+		int waveCount,totalwave;
+		int Success_Count,check_count;
 		
-
 		Network *resource;
 		Network resource_original;
 		Network *resource_Hr;
 		double lamda, mu;
         priority_queue<Event> schedule;
 		FILE *logFile;
-
+		FILE *logresult;
+		
         void arrange(Event cur){
 			fprintf(logFile, "Event No.%d Eventtype:%d process\n", cur.ID, cur.type);
+
+			printf("\n_________________________before arrange___________________\n");
 			//if(eventCount == 4 && cur.type == 0){
-			    /*for(int k = 0; k < resource->n; k++)
+			    for(int k = 0; k < resource->n; k++)
 			        cout<<resource->vertexWeight[k];
 				cout<<"\n";
 				int m = resource->edges.size();
@@ -135,20 +145,23 @@ class Center{
 				        int bandwidth = resource->edges[ij].wave.size();
 				        for(int b = 0; b < bandwidth; b++)
 					        cout<<resource->edges[ij].wave[b];
-						cout<<"\n";
-			}*///用于检查
+						printf("   ij: %d--%d \n",resource->edges[ij].tail,resource->edges[ij].head);
+			}//用于检查
 			int checkError;
 			//**********************************************************************
 
-			Heuristic Hr(cur.demand, resource, logFile);
-
-
+			Heuristic *Hr = new Heuristic(cur.demand, resource, logFile);
+			
+			
 			//**********************************************************************
 			//利用ILP求解并检查
-			 printf("***************************");
+			printf("eventnum : %d\n",eventCount);
+			if(eventCount ==3)
+				printf("");
+			//Event retILP = Hr->solveByHeuristic(cur.demand, resource, logFile);
 
-			 Event retILP = Hr.solveByHeuristic(cur.demand, resource, logFile);
-			//Event retILP = solveBySimpleILP(cur.demand, resource, logFile);
+			Event retILP = solveBySimpleILP(cur.demand, resource, logFile);
+
 			if(retILP.isSuccess){
 				numILPSuccess += 1;
 				totalILPTime += retILP.proccessTime;
@@ -174,6 +187,11 @@ class Center{
 				fprintf(logFile, "ILP success, get object of %f, using Time %f\n ", retILP.resultWeight, retILP.proccessTime);*/
 				if(retILP.isSuccess){
 					//if(eventCount == 4){
+					Success_Count++;
+					float averagemod = 0;
+					float averagedistance = 0;
+
+
 				    fprintf(logFile, "ILP success, get object of %f, using Time %f\n ", retILP.resultWeight, retILP.proccessTime);
 				    for(int i = 0; i < cur.demand->n; i++)
 					   for(int k = 0; k < resource->n; k++)
@@ -181,11 +199,14 @@ class Center{
 								fprintf(logFile, "A: virtualNod; %d,--> phsicalNod: %d\n ", i, k);}
 					for(int i = 0; i < cur.demand->m; i++)
 		                for(int j = 0; j < resource->m ; j++)
-				            for (int a =0; a < resource->edges[j].bandwidth - cur.demand->edges[i].bandwidth + 1; a++)
+				            for (int a =0; a < resource->edges[j].bandwidth/*11/28 加了这个反而会漏掉很多结果 - cur.demand->edges[i].bandwidth + 1*/; a++)
 					            for(int mod =0; mod < resource->mod; mod++)
 									if(retILP.b[i][j][a][mod] == 1){
-										fprintf(logFile, "Z: virtualedge; %d,--> phsicaledge: %d, startgrid: %d, modulation: %d\n", i, j, a, mod);}
-					/*for(int i = 0; i < cur.demand->m; i++)
+										fprintf(logFile, "Z: virtualedge; %d,--> phsicaledge: %d, startgrid: %d, modulation: %d\n", i, j, a, mod);
+										averagemod += mod;//2016/9/4添加 计算平均mod
+										averagedistance += resource->edges[j].distance;//2016/9/9 计算平均距离
+									}								
+					for(int i = 0; i < cur.demand->m; i++)
 		                for(int j = 0; j < resource->m ; j++)
 				            for (int a =0; a < resource->edges[j].bandwidth - cur.demand->edges[i].bandwidth + 1; a++)
 								if(retILP.c[i][j][a] == 1){
@@ -196,17 +217,20 @@ class Center{
 							if(retILP.d[i][a] == 1){
 								fprintf(logFile, "T: virtualedge; %d,--> startgrid: %d\n ", i, a);
 							}
-					 for(int i = 0; i < cur.demand->m; i++)
+					 for(int i = 0; i < cur.demand->m; i++){
 		                 for(int mod =0; mod < resource->mod; mod++)
 							 if(retILP.e[i][mod] == 1){
 								 fprintf(logFile, "S: virtualedge; %d,--> modulation: %d\n ", i, mod);
-							 }*/
+							 }
+					 }
+					 totalmod += averagemod/(cur.demand->m);
+					 totaldistance += averagedistance / (cur.demand->m);
 
 				}
 				else
 					fprintf(logFile, "ILP failed\n");
 				
-
+			
 			int thisTime = cur.arrivalTime;
 			if(retILP.isSuccess){
 				//分配资源
@@ -219,33 +243,81 @@ class Center{
 				}
 				for(int k = 0; k < resource->n; k++)
 				    resource->vertexWeight[k] -= retILP.demand->vertexWeight[k];
-				//if(eventCount == 4)
-				
-			       /* for(int k = 0; k < resource->n; k++)
-			            cout<<resource->vertexWeight[k];
-					cout<<"\n";*/
-			       /* for(int ij = 0; ij < m; ij++){
-				        int bandwidth = resource->edges[ij].wave.size();
-				        for(int b = 0; b < bandwidth; b++)
-					        cout<<resource->edges[ij].wave[b];
-						cout<<"\n";
-			  
-				}*///用于检查
-				//增加离去事件
+					
 				*(cur.demand) = *(retILP.demand);
-				cur.arrivalTime +=  Exponential(mu);
+				cur.arrivalTime +=  possion(mu);
 				cur.type = 1;
 				push(cur);
 			}
+
+						printf("\n_________________________after arrange___________________\n");
+			//if(eventCount == 4 && cur.type == 0){
+			    for(int k = 0; k < resource->n; k++)
+			        cout<<resource->vertexWeight[k];
+				cout<<"\n";
+				int mm = resource->edges.size();
+			    for(int ij = 0; ij < mm; ij++){
+				        int bandwidth = resource->edges[ij].wave.size();
+				        for(int b = 0; b < bandwidth; b++)
+					        cout<<resource->edges[ij].wave[b];
+						printf("   ij: %d--%d \n",resource->edges[ij].tail,resource->edges[ij].head);
+			}//用于检查
+
+			
 			delete retILP.demand;
 
+		//	fprintf(logresult,"%d \n",eventCount);
+			if(eventCount == CHECKNUM*check_count){//检查是否到达需要记录的阶段
+				float SuccessRate = float(Success_Count)/(CHECKNUM*check_count);	//
+				float AverageWeight = float(totalILPWeight )/ Success_Count;
+				float AverageMod = totalmod/Success_Count;	//
+				float AverageTime = float(totalILPTime)/(CHECKNUM*check_count);	//
+				float AverageDistance = totaldistance / Success_Count;
+				
+				for(int k = 0; k < resource->m; k++){
+					for(int a = 0; a < resource->edges[k].wave.size(); a++){
+						totalwave++;
+						if(resource->edges[k].wave[a] == 0)
+							waveCount++;
+					}
+				}
+				float waveUtilization = float(waveCount)/totalwave;
 
+				printf("%f  \n",SuccessRate);
+				fprintf(logresult,"%f  ",SuccessRate);
+				fprintf(logresult,"%f  ",AverageWeight );
+				fprintf(logresult,"%f  ",AverageMod );
+				fprintf(logresult,"%f  ", AverageDistance);
+				fprintf(logresult,"%f  ",AverageTime );
+				fprintf(logresult,"%f  ",waveUtilization );
+				//fprintf(logresult,"event:");
+				fprintf(logresult,"%d\n",eventCount);
+				/*
+				 for(int ij = 0; ij < mm; ij++){
+				        int bandwidth = resource->edges[ij].wave.size();
+				        for(int b = 0; b < bandwidth; b++){
+							int waveflag = 0;
+							if(resource->edges[ij].wave[b])
+								 waveflag = 1;
+					        fprintf(logresult,"%d",waveflag);
+						}
+						fprintf(logresult,"   ij: %d--%d \n",resource->edges[ij].tail,resource->edges[ij].head);
+				 }*/
+			//	Success_Count = 0;
+			//	totalmod = 0;
+				check_count ++;
+
+			}
 			
 
 			//下一个到达事件
 			if(eventCount < DEMANDNUM){
 				newDemandGenerate();
-				push(Event(0, thisTime + 1 /*Exponential(1/lamda)*/, eventCount, new Network("inputData\\demand_r.txt")));
+				Network *new_network = new Network("inputData\\demand_r.txt");
+				Event *new_event = new Event(0, thisTime + possion(1 / lamda), eventCount, new_network);
+				push(*new_event);
+				delete new_event;
+				delete new_network;
 			}
         }
 		//释放资源
@@ -260,22 +332,40 @@ class Center{
 			}
 			for(int k = 0; k < resource->n; k++)
 			    resource->vertexWeight[k] += cur.demand->vertexWeight[k];
-			delete cur.demand;
+			
+			printf("\n*********************************leaving event \n");
+			 for(int k = 0; k < resource->n; k++)
+			        cout<<resource->vertexWeight[k];
+				cout<<"\n";
+				 int mmm = resource->edges.size();
+			    for(int ij = 0; ij < mmm; ij++){
+				        int bandwidth = resource->edges[ij].wave.size();
+				        for(int b = 0; b < bandwidth; b++)
+					        cout<<resource->edges[ij].wave[b];
+						printf("   ij: %d--%d \n",resource->edges[ij].tail,resource->edges[ij].head);
+			}
+			printf("\n********************************************** \n");	
+			
+			//delete cur.demand;
+			
         }
     public:
+		
         Center() {
 			logFile = fopen("outputData\\logFile.txt", "w");
 		}
         Center(Network *t, double lam, double muu){
             resource = t;
-			
-
 			lamda = lam;
 			mu = muu;
 			eventCount = 0;
+			Success_Count = totalmod = 0,check_count = 1;
 			numILPSuccess = numILPBlock = 0;
 			totalILPTime = totalILPWeight = 0;
+			waveCount = totalwave = 0;
 			logFile = fopen("outputData\\logFile.txt", "w");
+			logresult = fopen("outputData\\result.txt","w");
+			
         }
 
         void push(Event cur){
@@ -284,7 +374,8 @@ class Center{
 			    eventCount++;
 		}
         void pop(){
-            Event cur = schedule.top();
+	
+           Event cur = schedule.top();
             schedule.pop();
 
 			if(!cur.type){
@@ -292,9 +383,8 @@ class Center{
 				show("outputData\\processInfo.txt", cur.ID);
 			}
 			else{
-				resource_original = *resource;
-                release(cur);
-				*resource = resource_original;
+                release(cur);								//释放资源影响到resource变量的么，resource明明不是cur的变量啊。← 这是离去事件！
+				
 			}
         }
 		bool empty(){
@@ -312,5 +402,6 @@ class Center{
 
 		~Center(){
 			fclose(logFile);
+			fclose(logresult);
 		}
 };

@@ -5,10 +5,10 @@
 
 void main(){
 	//srand((unsigned)time(NULL));
-	double lamda;
+	double lamda = 1;
 	double mu = 1;
 	//scanf("%lf", &lamda);
-	lamda = 2;
+	
 	
 	//for(lamda = 10; lamda <= 100; lamda += 10)
 	{
@@ -21,8 +21,9 @@ void main(){
 
 		Network *G = new Network("inputData\\whole_r_sixnodes.txt");
 		Center ct(G, lamda, mu);
-
-		newDemandGenerate();
+		
+		//newDemandGenerate();
+		
 		ct.push(Event(0, 0, 0, new Network("inputData\\demand_r.txt")));
 		while(!ct.empty()){
 			ct.pop();
