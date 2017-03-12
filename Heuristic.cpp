@@ -1,3 +1,4 @@
+#pragma once
 #include "Heuristic.h"
 #include "UsTime.h"
 #include "Graph.h"
@@ -6,6 +7,7 @@
 #define Cr 0.05	//0.5当前结果最好
 static int nodeID = -1;
 static vector<Nodes> nodes_temp;
+
 
 /*排序函数，用来对节点的度进行排序*/
 bool sort_nodes(const Nodes &n1, const Nodes &n2){				
@@ -160,7 +162,7 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 			/*接下来要根据 i,j是否被映射选择增加虚边的数量，如果被映射了只增加一条，没有的话就全加上。*/
 
 			auxGraph.n +=2;	//加上了两个虚拟节点
-			int FIk_i = -1, FIk_j = -1, if_node_embeded = 0;	//初始化映射flag 假定没有被映射到任何一点上
+			int FIk_i = -1, FIk_j = -1, if_node_embeded = 0,if_in_area = 0;	//初始化映射flag 假定没有被映射到任何一点上
 			for (int k = 0; k < resource->n; k++){
 					if(FIk[demand_head][k] == 1)
 						FIk_j = k;
@@ -180,11 +182,18 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 				for(int k = 0; k < resource->n; k++){
 					for (int demand_k = 0; demand_k < demand->n; demand_k ++){
 						if(FIk[demand_k][k] == 1 )
-							if_node_embeded = 1;
+							if_node_embeded = 1;						
 					}
+
+					int node_area = demand->neighbor[demand_tail][0];//将要映射到的区域
+					for (int kk = 0; kk < resource->neighbor[node_area].size();kk++){						
+						if(k == resource->neighbor[node_area][kk])
+							if_in_area = 1;
+					}
+
 					int dmn = 0;
 					double rin = 0;
-					if(if_node_embeded == 0){
+					if(if_node_embeded == 0&&if_in_area == 1){
 						if(resource->vertexWeight[k]>demand->vertexWeight[demand_tail]){
 					Edge *te = new Edge(auxGraph.n-2,k,auxGraph.maxBandwidth ,r_in[k],0);	//添加新的虚边
 /************************************************************************/
@@ -305,6 +314,7 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						
 					}
 					if_node_embeded = 0;
+					if_in_area = 0;
 				}
 			}	
 
@@ -325,10 +335,16 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						if(FIk[demand_k][k] == 1 )
 							if_node_embeded = 1;
 					}//判断某个点在这轮映射里有没有被用过，避免重复映射到同一点
-				
+
+					int node_area = demand->neighbor[demand_head][0];//将要映射到的区域
+					for (int kk = 0; kk < resource->neighbor[node_area].size();kk++){						
+						if(k == resource->neighbor[node_area][kk])
+							if_in_area = 1;
+					}
+
 					int dmn = 0;
 					double rmj = 0;
-					if(if_node_embeded == 0){
+					if(if_node_embeded == 0&&if_in_area==1){
 						if(resource->vertexWeight[k]>demand->vertexWeight[demand_head]){
 					Edge *te = new Edge(k+resource->n,auxGraph.n-1,auxGraph.maxBandwidth ,r_mj[k],0);
 /************************************************************************/
@@ -443,6 +459,7 @@ Network Heuristic::auxGraph_generate(int demand_head, int demand_tail,int a,int 
 						}
 					}
 					if_node_embeded = 0;
+					if_in_area = 0;
 				}
 			}
 			r_in.swap(vector<int>());
@@ -501,7 +518,7 @@ int Heuristic::findpath(Network *r,int source_vertexID, int dest_vertexID){
 	int temp_dist=100000000,temp_node_id ,findcounts = 0;
 	Network *tempnet = r;
 	vector<double>dist(tempnet->n,1000000000);
-	//vector<int> last_vertex_ID;							//记录上一个节点的ID
+	vector<int> last_vertex_ID;							//记录上一个节点的ID
 
 	last_vertex_ID.clear();
 	for(int i = 0; i < tempnet->n; i++)
@@ -587,7 +604,7 @@ Heu_return Heuristic::work(){
 		//if(modtype < 4) modtype += 1;
 		for (int mod = 3; mod >= 0; mod--) {
 			modtype--;
-			int g = ceil(float(float(edges_after[ij].bandwidth) / (mod + 1)));//g为在当前mod下需要使用的带宽
+			int g = ceil(float(float(edges_after[ij].bandwidth) / (mod + 1))+G_num);//g为在当前mod下需要使用的带宽
 			int F_g_1 = resource->maxBandwidth - g + 1;	//这里擅自取了F=maxBandwidth 循环多了应该也不影响，能找到会在之前就找到，找不到循环到底也找不到
 			for (int a = 0; a < F_g_1; a++) {
 				

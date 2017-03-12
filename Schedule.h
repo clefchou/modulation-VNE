@@ -1,15 +1,16 @@
+#pragma once
 #include"Graph.h"
 #include"ILPSolver.h"
 #include"common.h"
 #include "Heuristic.h"
 
+
 #define WAIT 5
 #define DEMANDNUM 10000
 #define CHECKNUM 1
 
-int uniform(int a, int b){
-	return a + rand()%(b-a+1);
-}
+
+
 void topoGenerate(char route[], int n, int mod, int maxWeight,int maxdistance){
 /*
 	生成随机拓扑
@@ -134,6 +135,7 @@ class Center{
 		
         void arrange(Event cur){
 			fprintf(logFile, "Event No.%d Eventtype:%d process\n", cur.ID, cur.type);
+			
 
 			printf("\n_________________________before arrange___________________\n");
 			//if(eventCount == 4 && cur.type == 0){
@@ -158,9 +160,9 @@ class Center{
 			printf("eventnum : %d\n",eventCount);
 			if(eventCount ==3)
 				printf("");
-			//Event retILP = Hr->solveByHeuristic(cur.demand, resource, logFile);
+			Event retILP = Hr->solveByHeuristic(cur.demand, resource, logFile);
 
-			Event retILP = solveBySimpleILP(cur.demand, resource, logFile);
+			//Event retILP = solveBySimpleILP(cur.demand, resource, logFile);
 
 			if(retILP.isSuccess){
 				numILPSuccess += 1;
@@ -196,7 +198,7 @@ class Center{
 				    for(int i = 0; i < cur.demand->n; i++)
 					   for(int k = 0; k < resource->n; k++)
 					       if(retILP.a[i][k] == 1){
-								fprintf(logFile, "A: virtualNod; %d,--> phsicalNod: %d\n ", i, k);}
+							   fprintf(logFile, "A: virtualNod; %d,--> phsicalNod: %d	embedding area--> %d\n ", i, k,cur.demand->neighbor[i][0]);}
 					for(int i = 0; i < cur.demand->m; i++)
 		                for(int j = 0; j < resource->m ; j++)
 				            for (int a =0; a < resource->edges[j].bandwidth/*11/28 加了这个反而会漏掉很多结果 - cur.demand->edges[i].bandwidth + 1*/; a++)
@@ -314,6 +316,8 @@ class Center{
 			if(eventCount < DEMANDNUM){
 				newDemandGenerate();
 				Network *new_network = new Network("inputData\\demand_r.txt");
+				
+				
 				Event *new_event = new Event(0, thisTime + possion(1 / lamda), eventCount, new_network);
 				push(*new_event);
 				delete new_event;
@@ -369,6 +373,8 @@ class Center{
         }
 
         void push(Event cur){
+			//随机生成点的映射区域
+			randomGenerate(cur.demand,resource);
             schedule.push(cur);
 			if(cur.type == 0)
 			    eventCount++;

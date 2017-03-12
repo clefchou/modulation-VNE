@@ -1,10 +1,9 @@
+#pragma once
 #include "common.h"
 #include "Graph.h"
 #include <ilcplex/ilocplex.h>
 #include "UsTime.h"
-
-
-
+#include "MapGenerate.h"
 
 extern double ILPT;
 
@@ -13,13 +12,13 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 
 	IloEnv environment;
     IloModel model(environment);
-/*	IloCplex cplex(environment);
+	IloCplex cplex(environment);
 	cplex.setParam(IloCplex::WorkDir ,"c:/cplex/");
 	cplex.setParam(IloCplex::NodeFileInd,2);
-	cplex.setParam(IloCplex::WorkMem ,500.0);
+	cplex.setParam(IloCplex::WorkMem ,1000.0);
 	cplex.setParam(IloCplex::TiLim,30);
 	
-	*/
+	
 		IloArray<IloArray<IloIntVarArray>> M(environment, d->m);
 	    for(int ij = 0; ij < d->m; ij++){
 		    M[ij] = IloArray<IloIntVarArray>(environment, r->m);
@@ -53,7 +52,7 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 					for(int a = 0; a < r->edges[mn].bandwidth - ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))) + 1; a++){
 						//double p1=0;
 						//p1 += d->edges[ij].bandwidth/( mod+1 );
-				        BP += r->edges[mn].cmn * ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))) * Z[ij][mn][a][mod];
+				        BP += r->edges[mn].cmn * ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))+G_num) * Z[ij][mn][a][mod];
 					}
 	    for(int i = 0; i < d->n; i++)
 		    for(int k = 0; k < r->n; k++)
@@ -70,8 +69,15 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 		//4
 		for(int i = 0; i < d->n; i++){
 		    IloExpr constraint(environment);
-		    for(int k = 0; k < r->n; k++)
-			    constraint += A[i][k];
+			//需要被映射的区域位置
+			int p = d->neighbor[i][0];
+		    for(int k = 0; k < r->n; k++){
+				//只添加区域内的节点				
+				for(int j = 0; j < r->neighbor[p].size(); j++){
+					if(k == r->neighbor[p][j])	//如果k处于区域p中,添加进去
+						constraint += A[i][k];
+				}	    
+			}
 		    model.add(constraint == 1);
 	    }
 		//5
@@ -156,8 +162,8 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 						IloExpr constraint(environment);
 						//double p1=0;
 						//p1 += d->edges[ij].bandwidth/( mod+1 );
-						constraint += Z[ij][mn][a][mod] * ceil(float (float(d->edges[ij].bandwidth)/( mod+1 )));
-						for(int t = a; t < a + ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))); t++)
+						constraint += Z[ij][mn][a][mod] * ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))+G_num);
+						for(int t = a; t < a + ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))+G_num); t++)
 						    constraint -= r->edges[mn].wave[t];
 						model.add(constraint <= 0);
 					}
@@ -171,9 +177,9 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 			    for(int mod = 0; mod < r->mod; mod++)
 				    for(int ij = 0; ij < d->m; ij++)
 					{
-						int tempbd=ceil(float (float(d->edges[ij].bandwidth)/( mod+1 )));
+						int tempbd=ceil(float (float(d->edges[ij].bandwidth)/( mod+1 ))+G_num);
 						for(int t = 0; t< r->edges[mn].bandwidth - tempbd + 1; t++)
-						    if(t <= a && t + tempbd -1>= a)
+						    if(t <= a && t + tempbd -1>= a && t >= 1)
 								 constraint += Z[ij][mn][t][mod];
 					}
 				model.add(constraint <= 0);
@@ -205,11 +211,11 @@ Event solveBySimpleILP(Network *d, Network *r, FILE *logFile){
 	IloCplex solver(model);
 	solver.setParam(IloCplex::WorkDir ,"c:/cplex/");
 	solver.setParam(IloCplex::NodeFileInd,2);
-	solver.setParam(IloCplex::WorkMem ,100.0);
-	solver.setParam(IloCplex::TiLim,3);
+	solver.setParam(IloCplex::WorkMem ,1000.0);
+	solver.setParam(IloCplex::TiLim,30);
 	//environment.out()<<"   "<<solver.getObject();
 	solver.setOut(environment.getNullStream());
-	//solver.setParam(IloCplex::Threads, 1);//2016/11/3
+	solver.setParam(IloCplex::Threads, 1);//2016/11/3
 	//FILE *file;
 	//file = fopen("D:\\毕设\\xuni\\outputData\\file.lp", "w");
 	//solver.exportModel("D:\\毕设\\xuni\\outputData\\file.lp");

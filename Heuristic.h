@@ -1,3 +1,4 @@
+#pragma once
 #include "common.h"
 #include "Graph.h"
 
@@ -47,7 +48,7 @@ private:
 	Network auxGraph_generate(int demand_head, int demand_tail, int a, int g, int maxdistance);
 	int findpath();
 	int findpath(Network *r,int source_vertexID, int dest_vertexID);
-	
+
 public:
 	
 	Heuristic();

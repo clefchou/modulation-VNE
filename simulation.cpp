@@ -1,17 +1,19 @@
+#pragma once
 #include"Graph.h"
 #include"Schedule.h"
 #include"common.h"
-
+#include"MapGenerate.h"
 
 void main(){
 	//srand((unsigned)time(NULL));
-	double lamda = 1;
+	double lamda = 0.7;
 	double mu = 1;
 	//scanf("%lf", &lamda);
 	
 	
 	//for(lamda = 10; lamda <= 100; lamda += 10)
 	{
+		//mapGenerate("inputData\\demand_r.txt", 6, 8,2, 1, 300);
 		char route[30] = "outputData_00.txt";
 		route[11] = ((int)lamda)/10%10+'0';
 		route[12] = ((int)lamda)%10+'0';
@@ -21,7 +23,8 @@ void main(){
 
 		Network *G = new Network("inputData\\whole_r_sixnodes.txt");
 		Center ct(G, lamda, mu);
-		
+		//求得邻居区域节点
+		chooseLi(G,1500);
 		//newDemandGenerate();
 		
 		ct.push(Event(0, 0, 0, new Network("inputData\\demand_r.txt")));
