@@ -190,3 +190,37 @@ void randomGenerate(Network *d,Network *r){
 	}    
 
 }
+
+/*
+ * 求每个点到其他区域的平均距离
+ */
+void mutualDistance(Network *r){
+	//默认的区域间距离
+	int defaultDistance = 10000;
+	//遍历所有点
+	for(int k = 0; k < r->n; k++){
+		int diff_area_node = 0;
+		int totalDistance = 0;
+		//遍历所有边
+		for(int mn = 0; mn <r->m; mn++){
+			int if_node_neighbor = 0;
+			if(r->edges[mn].head == k){	//如果头结点为k,判断尾节点是否与k同区域,如果不是则该边连接两个不同区域
+				for(int i = 0; i <  r->neighbor[k].size();i++)
+					if(r->edges[mn].tail == r->neighbor[k][i])
+						if_node_neighbor = 1;
+				if(!if_node_neighbor){
+					totalDistance+=r->edges[mn].distance;
+					diff_area_node++;
+				}
+			}
+		}
+		if(!totalDistance)
+			totalDistance = defaultDistance;
+		else
+			totalDistance /= diff_area_node;
+		vector<int>distance;
+		
+		distance.push_back(totalDistance);
+		r->neighborDistance.push_back(distance);
+	}
+}
